@@ -26,7 +26,7 @@ public:
 	void DestroyItems();
 
 	int GetItemCount();
-	std::vector<Item *> GetItems();
+	//std::vector<Item *> GetItems();
 	std::string GenerateSlip();
 
 };

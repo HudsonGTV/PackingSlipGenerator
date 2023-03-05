@@ -4,11 +4,21 @@
 
 #include "slip.h"
 
+/// <summary>
+///		Prints 2 strings next to eachother and pads the second string by specified amount.
+/// </summary>
+/// <param name="str1">First String</param>
+/// <param name="str2">Second String</param>
+/// <param name="amount">Amount to pad</param>
+/// <param name="padChar">Character to use for padding</param>
+/// <returns>Padded strings</returns>
 std::string PadStrings(std::string str1, std::string str2, int amount, char padChar = ' ') {
 
+	// Ensure valid amount
 	if(amount <= 0)
 		throw std::exception("InvalidArgumentException");
 
+	// String to be returned
 	std::string out = str1;
 
 	// Pad str2
@@ -19,13 +29,23 @@ std::string PadStrings(std::string str1, std::string str2, int amount, char padC
 
 }
 
+/// <summary>
+///		Pads an int with specified character.
+/// </summary>
+/// <param name="number">Number to be padded</param>
+/// <param name="amount">Amount to pad</param>
+/// <param name="padChar">Character to use for padding</param>
+/// <returns>Padded int</returns>
 std::string PadInt(int number, int amount, char padChar = '0') {
 
+	// Ensure valid amount
 	if(amount <= 0)
 		throw std::exception("InvalidArgumentException");
 
+	// String to be returned
 	std::string out = std::to_string(number);
 
+	// Pad number
 	int nLen = out.length();
 	for(int i = 0; i < amount - nLen; ++i)
 		out = padChar + out;
@@ -34,6 +54,11 @@ std::string PadInt(int number, int amount, char padChar = '0') {
 
 }
 
+/// <summary>
+///		Formats date into format: MONTH DD, YYYY.
+/// </summary>
+/// <param name="time">Time to format</param>
+/// <returns>Formatted date</returns>
 std::string GetFormattedDate(std::time_t time) {
 
 	// Month names
@@ -55,6 +80,7 @@ std::string GetFormattedDate(std::time_t time) {
 
 }
 
+/// <param name="companyFileName">File path of file to be opened</param>
 PackingSlip::PackingSlip(std::string companyFileName) {
 
 	// Get processing date
@@ -64,9 +90,11 @@ PackingSlip::PackingSlip(std::string companyFileName) {
 	// Process company info from file
 	std::vector<std::string> companyFileData;
 
+	// File input stream
 	std::ifstream companyFileInput;
 	companyFileInput.open(companyFileName, std::ios::in);
 
+	// Read file into companyFileData
 	if(companyFileInput.is_open()) {
 		std::string fileLine;
 		while(std::getline(companyFileInput, fileLine))
@@ -74,6 +102,7 @@ PackingSlip::PackingSlip(std::string companyFileName) {
 		companyFileInput.close();
 	} else std::cout << "[Error] Could not open file with name: " << companyFileName << std::endl;
 
+	// Ensure file is formatted correctly
 	if(companyFileData.size() != 8) {
 		std::cout << "[Error] Invalid/missing data in file with name: " << companyFileName << std::endl;
 		throw std::exception("InvalidFileFormatException");
@@ -87,12 +116,13 @@ PackingSlip::PackingSlip(std::string companyFileName) {
 	m_company->SetTelephone(companyFileData[6]);
 	m_company->SetWebsite(companyFileData[7]);
 
-	// Prompt for customer info
+	// Customer Info variables
 	std::string cName;
 	Address *cAddr = new Address();
 	std::string cCountry;
 	std::string cTel;
 
+	// Prompt for customer info
 	std::cout << "Customer Info" << std::endl;
 	std::cout << "  Name: ";
 	std::getline(std::cin, cName);
@@ -131,45 +161,76 @@ PackingSlip::PackingSlip(std::string companyFileName) {
 }
 
 PackingSlip::~PackingSlip() {
+
 	delete m_company;
 	delete m_customer;
+
 	DestroyItems();
+
 }
 
+/// <summary>
+///		Adds item to list (vector).
+/// </summary>
+/// <param name="item">Pointer to the item to be added</param>
 void PackingSlip::AddItem(Item *item) {
+	// Ensure item is not nullptr
 	if(!item)
 		throw std::exception("NullPointerException");
+	// Add item
 	m_items.push_back(item);
 }
 
+/// <summary>
+///		Removes item to list (vector).
+/// </summary>
+/// <param name="item">Pointer to the item to be removed</param>
 void PackingSlip::RemoveItem(Item *item) {
 
+	// Ensure item is not nullptr
 	if(!item)
 		throw std::exception("NullPointerException");
 
+	// Search for and remove item in m_items vector
 	for(int i = 0; i < m_items.size(); ++i) {
-		if(m_items.at(i) == item)
+		if(m_items.at(i) == item) {
 			m_items.erase(m_items.begin() + i);
+			return;
+		}
 	}
 
+	// No item found if it makes it to here
 	throw std::exception("ItemNotFoundException");
 
 }
 
+/// <summary>
+///		Destroys (deletes) all items in list (vector).
+/// </summary>
 void PackingSlip::DestroyItems() {
+	// Free all items in vector
 	for(Item *item : m_items)
 		delete item;
+	// Clear vector
 	m_items.clear();
 }
 
+/// <summary>
+///		Gets the number of items in the list (vector).
+/// </summary>
+/// <returns>Number of items in list</returns>
 int PackingSlip::GetItemCount() {
 	return m_items.size() + 1;
 }
 
-std::vector<Item *> PackingSlip::GetItems() {
+/*std::vector<Item *> PackingSlip::GetItems() {
 	return m_items;
-}
+}*/
 
+/// <summary>
+///		Generates a printable packing slip.
+/// </summary>
+/// <returns>String containing packing slip data</returns>
 std::string PackingSlip::GenerateSlip() {
 
 	std::string buffer = PadStrings("", "PACKING LIST\n", m_padAmount);
