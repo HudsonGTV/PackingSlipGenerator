@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <chrono>
 
 #include "slip.h"
@@ -60,13 +61,31 @@ PackingSlip::PackingSlip(std::string companyFileName) {
 	std::chrono::system_clock::time_point timeNow = std::chrono::system_clock::now();
 	m_date = std::chrono::system_clock::to_time_t(timeNow);
 
+	// Process company info from file
+	std::vector<std::string> companyFileData;
+
+	std::ifstream companyFileInput;
+	companyFileInput.open(companyFileName, std::ios::in);
+
+	if(companyFileInput.is_open()) {
+		std::string fileLine;
+		while(std::getline(companyFileInput, fileLine))
+			companyFileData.push_back(fileLine);
+		companyFileInput.close();
+	} else std::cout << "[Error] Could not open file with name: " << companyFileName << std::endl;
+
+	if(companyFileData.size() != 8) {
+		std::cout << "[Error] Invalid/missing data in file with name: " << companyFileName << std::endl;
+		throw std::exception("InvalidFileFormatException");
+	}
+
 	// Set Default Info
 	m_company = new Company();
-	m_company->SetName("HKG ELECTRONICS");
-	m_company->SetAddress("REDACTED", "REDACTED", 
-		"REDACTED", "REDACTED", "United States");
-	m_company->SetTelephone("REDACTED");
-	m_company->SetWebsite("REDACTED");
+	m_company->SetName(companyFileData[0]);
+	m_company->SetAddress(companyFileData[1], companyFileData[2],
+		companyFileData[3], companyFileData[4], companyFileData[5]);
+	m_company->SetTelephone(companyFileData[6]);
+	m_company->SetWebsite(companyFileData[7]);
 
 	// Prompt for customer info
 	std::string cName;
