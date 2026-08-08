@@ -8,7 +8,7 @@ int main() {
 	std::cout << "PACKING SLIP GENERATE v1.0 BY HKG ELECTRONICS" << std::endl;
 
 	// Create packingSlip and trigger customer info gathering
-	PackingSlip *packingSlip = new PackingSlip("company_info.data");
+	PackingSlip packingSlip("company_info.data");
 
 	// Item manager section
 	std::cout << "Item Manager" << std::endl;
@@ -22,7 +22,7 @@ int main() {
 		int itemQuantity = 0;
 
 		// Prompt for item info
-		std::cout << "  Item #" << packingSlip->GetItemCount() << std::endl;
+		std::cout << "  Item #" << packingSlip.GetItemCount() << std::endl;
 		std::cout << "    Name: [ENTER to Finish]: ";
 		std::getline(std::cin, itemName);
 
@@ -74,18 +74,18 @@ int main() {
 		}
 
 		// Add item to packingSlip
-		packingSlip->AddItem(newItem);
+		packingSlip.AddItem(newItem);
 
 	}
 
 	std::cout << "Generating Packing Slip..." << std::endl;
 
 	// Get and print packing slip
-	std::string slip = packingSlip->GenerateSlip();
+	std::string slip = packingSlip.GenerateSlip();
 	std::cout << slip;
 
 	// Free packingSlip object
-	delete packingSlip;
+	//delete packingSlip;
 
 	// Get desired output filename
 	std::string fileOutputName = "null";

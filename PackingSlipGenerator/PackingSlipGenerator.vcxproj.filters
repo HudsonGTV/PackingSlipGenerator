@@ -30,9 +30,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="slip.cpp">
-      <Filter>Source Files\PackingSlip</Filter>
-    </ClCompile>
     <ClCompile Include="item.cpp">
       <Filter>Source Files\PackingSlip</Filter>
     </ClCompile>
@@ -41,6 +38,9 @@
     </ClCompile>
     <ClCompile Include="company.cpp">
       <Filter>Source Files\PackingSlip</Filter>
+    </ClCompile>
+    <ClCompile Include="slip.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
